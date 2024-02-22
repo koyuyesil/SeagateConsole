@@ -57,6 +57,8 @@
             toolTip1 = new ToolTip(components);
             cmbDataPattern = new ComboBox();
             lblCmdStringStatus = new Label();
+            richTextBox1 = new RichTextBox();
+            btnConnect = new Button();
             gbxFormatOptions.SuspendLayout();
             gbxDefectListOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarMaxWrRetryCnt).BeginInit();
@@ -320,11 +322,31 @@
             lblCmdStringStatus.TabIndex = 18;
             lblCmdStringStatus.Text = "lblCmdStringStatus";
             // 
+            // richTextBox1
+            // 
+            richTextBox1.Location = new Point(289, 289);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(499, 149);
+            richTextBox1.TabIndex = 19;
+            richTextBox1.Text = "";
+            // 
+            // btnConnect
+            // 
+            btnConnect.Location = new Point(587, 85);
+            btnConnect.Name = "btnConnect";
+            btnConnect.Size = new Size(75, 23);
+            btnConnect.TabIndex = 20;
+            btnConnect.Text = "Connect";
+            btnConnect.UseVisualStyleBackColor = true;
+            btnConnect.Click += btnConnect_ClickAsync;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnConnect);
+            Controls.Add(richTextBox1);
             Controls.Add(lblCmdStringStatus);
             Controls.Add(cmbDataPattern);
             Controls.Add(lblMaxCertifyTrkRewrites);
@@ -342,8 +364,10 @@
             Controls.Add(cmbPartition);
             Controls.Add(gbxFormatOptions);
             Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Form1";
             Load += Form1_Load;
+            LocationChanged += Form1_LocationChanged;
             gbxFormatOptions.ResumeLayout(false);
             gbxFormatOptions.PerformLayout();
             gbxDefectListOptions.ResumeLayout(false);
@@ -385,5 +409,7 @@
         private ToolTip toolTip1;
         private ComboBox cmbDataPattern;
         private Label lblCmdStringStatus;
+        private RichTextBox richTextBox1;
+        private Button btnConnect;
     }
 }

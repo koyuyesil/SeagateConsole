@@ -1,4 +1,7 @@
 using System.Globalization;
+using System.IO.Ports;
+using System.Text;
+using System.Windows.Forms;
 
 namespace SeagateConsole
 {
@@ -23,11 +26,15 @@ namespace SeagateConsole
         private UInt16 MaxEccTLevel;
         private UInt16 MaxCertifyTrkRewrites;
         private UInt32 DataPattern;
-
+        SerialPortManager portManager = new SerialPortManager("COM10", 115200);
+        SerialTestConsole serialTestConsole;
         public Form1()
         {
             InitializeComponent();
             InitializeTrackBars();
+
+            portManager._serialPort.DataReceived += _serialPort_DataReceived;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -50,6 +57,12 @@ namespace SeagateConsole
             cmbDataPattern.Items.Add("55555555");
             cmbDataPattern.SelectedIndex = 0;
             tbxCommandString.Text = "m0,0,3,0,0,0,0,22,00000000";
+
+#if DEBUG
+            serialTestConsole = new SerialTestConsole();
+            serialTestConsole.Show(); // Debug modunda yeni form aç
+            serialTestConsole.Location = new Point(this.Location.X + this.Width, this.Location.Y); // Formu açýlan formun tam saðýnda konumlandýr
+#endif
         }
 
         private void InitializeTrackBars()
@@ -207,6 +220,112 @@ namespace SeagateConsole
         private void FormatAndDefectlistOptions_CheckedChanged(object? sender, EventArgs e)
         {
             UpdateDefectListOptions();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // RichTextBox kontrolüne renkli log ekleme
+        private void AddLog(string message, Color color)
+        {
+            richTextBox1.SelectionColor = color;
+            richTextBox1.AppendText(message + Environment.NewLine);
+            richTextBox1.SelectionColor = richTextBox1.ForeColor; // Varsayýlan rengi geri ayarla
+        }
+
+        // Kullaným örneði
+        private void LogInfo(string message)
+        {
+            AddLog("[INFO] " + message, Color.Green);
+        }
+
+        private void LogWarning(string message)
+        {
+            AddLog("[WARNING] " + message, Color.Orange);
+        }
+
+        private void LogError(string message)
+        {
+            AddLog("[ERROR] " + message, Color.Red);
+        }
+
+
+        private void btnConnect_ClickAsync(object sender, EventArgs e)
+        {
+
+
+            LogInfo("Port bekleniyor...");
+            if (portManager.WaitForPort(5)) // 30 saniye boyunca port açýlmayý bekler
+            {
+                LogInfo("Port baþarýyla açýldý!");
+                portManager._serialPort.Write(new byte[] { 26 }, 0, 1);
+                portManager._serialPort.WriteLine("\x1A");
+            }
+            else
+            {
+                LogError("Port açýlamadý.");
+            }
+
+            //portManager.ClosePort(); // Ýþlem tamamlandýktan sonra portu kapat //TODO HACK
+        }
+
+        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            // Veri alýndýðýnda bu metod çalýþýr
+            int bytesToRead = portManager._serialPort.BytesToRead; // Alýnan bayt sayýsýný kontrol et
+
+            if (bytesToRead > 0)
+            {
+                byte[] buffer = new byte[bytesToRead];
+
+                // Seri porttan veriyi oku
+                portManager._serialPort.Read(buffer, 0, bytesToRead);
+
+                // Okunan baytlarý stringe çevir
+                string receivedData = Encoding.ASCII.GetString(buffer);
+
+                // TextBox'a gelen veriyi ekleyin (UI iþlemleri için Invoke kullanýn)
+                Invoke(new Action(() =>
+                {
+                    richTextBox1.AppendText(receivedData);
+                }));
+            }
+        }
+
+        private void Form1_LocationChanged(object sender, EventArgs e)
+        {
+#if DEBUG
+            if (serialTestConsole != null)
+            {
+                serialTestConsole.Location = new Point(this.Location.X + this.Width, this.Location.Y); // Formu açýlan formun tam saðýnda konumlandýr
+            }
+
+#endif
         }
     }
 }
