@@ -11,13 +11,15 @@ namespace SeagateConsole
     {
         private string _portName;
         private int _baudRate;
-        public SerialPort _serialPort;
+        private SerialPort serialPort;
+
+        public SerialPort SerialPort { get => serialPort; set => serialPort = value; }
 
         public SerialPortManager(string portName, int baudRate)
         {
             this._portName = portName;
             this._baudRate = baudRate;
-            this._serialPort = new SerialPort(portName, baudRate);
+            this.SerialPort = new SerialPort(portName, baudRate);
         }
 
         public bool WaitForPort(int timeoutInSeconds)
@@ -26,30 +28,30 @@ namespace SeagateConsole
 
             while (elapsedTime < timeoutInSeconds * 1000)
             {
+                // Seri portu açıksa kapat kapalıysa aç
                 try
                 {
-                    if (!_serialPort.IsOpen)
+                    if (serialPort.IsOpen)
                     {
-                        _serialPort.Open();
-                        return true;
+                        serialPort.Close();
                     }
+                    serialPort.Open();
+                    return true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // Port açılamadı, beklemeye devam et
+                    MessageBox.Show("Seri port açılamadı: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                
                 elapsedTime += 1000;
             }
-
             return false; // Belirtilen süre içinde port açılamazsa false döndür
         }
 
         public void ClosePort()
         {
-            if (_serialPort.IsOpen)
+            if (SerialPort.IsOpen)
             {
-                _serialPort.Close();
+                SerialPort.Close();
             }
         }
     }

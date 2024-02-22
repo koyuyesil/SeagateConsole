@@ -81,6 +81,7 @@
             Controls.Add(textBoxConsole);
             Name = "SerialTestConsole";
             Text = "SerialTestConsole";
+            FormClosing += SerialTestConsole_FormClosing;
             ResumeLayout(false);
             PerformLayout();
         }

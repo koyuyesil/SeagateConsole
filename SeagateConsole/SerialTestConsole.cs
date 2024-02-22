@@ -14,18 +14,22 @@ namespace SeagateConsole
     public partial class SerialTestConsole : Form
     {
         SerialPort serialPort;
+        SerialPortManager PM;
         public SerialTestConsole()
         {
             InitializeComponent();
-            // SerialPort nesnesini oluştur
-            serialPort = new SerialPort();
-            serialPort.PortName = "COM11"; // Kullanılacak seri portun adını belirtin
-            serialPort.BaudRate = 115200;   // Baud hızını ayarlayın (örneğin, 9600)
-            serialPort.DataBits = 8;
-            serialPort.Parity = Parity.None;
-            serialPort.StopBits = StopBits.One;
+            PM = new SerialPortManager("COM11", 115200);
+            serialPort = PM.SerialPort;
+
+            serialPort.PortName = tbxSerialPort.Text; // Kullanılacak seri portun adını belirtin
+            //serialPort.BaudRate = Convert.ToInt32(tbxBaundRate.Text);   // Baud hızını ayarlayın (örneğin, 9600)
+            //serialPort.DataBits = 8;
+            //serialPort.Parity = Parity.None;
+            //serialPort.StopBits = StopBits.One;
             serialPort.DataReceived += SerialPort_DataReceived; // Veri alındığında çalışacak olayı belirtin
 
+
+            PM.WaitForPort(3);
             ConnectToSerial();
         }
 
@@ -182,6 +186,20 @@ namespace SeagateConsole
             ConnectToSerial();
         }
 
-
+        private void SerialTestConsole_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Seri portu kapat
+            try
+            {
+                if (serialPort.IsOpen)
+                {
+                    serialPort.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Seri port kapatılamadı: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace SeagateConsole
         EnableSeaCOSXFSpaceFormat = 1 << 5
     }
 
-    public partial class Form1 : Form
+    public partial class MainConsole : Form
     {
         private Dictionary<CheckBox, FormatOptions> checkBoxOptionsMap;
         private UInt16 MaxWrRetryCnt;
@@ -28,12 +28,12 @@ namespace SeagateConsole
         private UInt32 DataPattern;
         SerialPortManager portManager = new SerialPortManager("COM10", 115200);
         SerialTestConsole serialTestConsole;
-        public Form1()
+        public MainConsole()
         {
             InitializeComponent();
             InitializeTrackBars();
 
-            portManager._serialPort.DataReceived += _serialPort_DataReceived;
+            portManager.SerialPort.DataReceived += _serialPort_DataReceived;
 
         }
 
@@ -283,28 +283,28 @@ namespace SeagateConsole
             if (portManager.WaitForPort(5)) // 30 saniye boyunca port açýlmayý bekler
             {
                 LogInfo("Port baþarýyla açýldý!");
-                portManager._serialPort.Write(new byte[] { 26 }, 0, 1);
-                portManager._serialPort.WriteLine("\x1A");
+                portManager.SerialPort.Write(new byte[] { 26 }, 0, 1);
+                //portManager.SerialPort.WriteLine("\x1A");
             }
             else
             {
                 LogError("Port açýlamadý.");
             }
 
-            //portManager.ClosePort(); // Ýþlem tamamlandýktan sonra portu kapat //TODO HACK
+            //PM.ClosePort(); // Ýþlem tamamlandýktan sonra portu kapat //TODO HACK
         }
 
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             // Veri alýndýðýnda bu metod çalýþýr
-            int bytesToRead = portManager._serialPort.BytesToRead; // Alýnan bayt sayýsýný kontrol et
+            int bytesToRead = portManager.SerialPort.BytesToRead; // Alýnan bayt sayýsýný kontrol et
 
             if (bytesToRead > 0)
             {
                 byte[] buffer = new byte[bytesToRead];
 
                 // Seri porttan veriyi oku
-                portManager._serialPort.Read(buffer, 0, bytesToRead);
+                portManager.SerialPort.Read(buffer, 0, bytesToRead);
 
                 // Okunan baytlarý stringe çevir
                 string receivedData = Encoding.ASCII.GetString(buffer);

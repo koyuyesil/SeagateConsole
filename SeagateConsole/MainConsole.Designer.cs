@@ -1,6 +1,6 @@
 ﻿namespace SeagateConsole
 {
-    partial class Form1
+    partial class MainConsole
     {
         /// <summary>
         ///  Required designer variable.
