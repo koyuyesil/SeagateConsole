@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO.Ports;
 
 namespace SeagateConsole
 {
     class SerialPortManager
     {
-        private string _portName;
-        private int _baudRate;
-        private SerialPort serialPort;
-
+        private SerialPort? serialPort;
         public SerialPort SerialPort { get => serialPort; set => serialPort = value; }
 
         public SerialPortManager(string portName, int baudRate)
         {
-            this._portName = portName;
-            this._baudRate = baudRate;
-            this.SerialPort = new SerialPort(portName, baudRate);
+            serialPort = new SerialPort(portName, baudRate);
+            //SerialPort.DataBits = 8;
+            //SerialPort.Parity = Parity.None;
+            //SerialPort.StopBits = StopBits.One;
         }
 
-        public bool WaitForPort(int timeoutInSeconds)
+        public bool OpenPort(int timeoutInSeconds)
         {
             int elapsedTime = 0;
 
@@ -49,9 +42,17 @@ namespace SeagateConsole
 
         public void ClosePort()
         {
-            if (SerialPort.IsOpen)
+            // Seri portu kapat
+            try
             {
-                SerialPort.Close();
+                if (serialPort.IsOpen)
+                {
+                    serialPort.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Seri port kapatılamadı: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -1,0 +1,130 @@
+/Here's a consolidated version of all the Seagate terminal commands collected so far. It's not intended to be an exhaustive list, but rather a collection of commands useful in data recovery. If you have more info to share please post it and I'll add it to the list:
+
+The Very Basics:
+
+TTL Default Settings:
+Bits per second - 38400
+Data Bits - 8
+Parity - None
+Stop Bits - 1
+Flow Control - None
+
+Ctrl+A		(displays drive info, Package Version, Serial #, Model # (useful for missing label), Servo FW, etc.
+Ctrl+C		(tells some drives to spin down, can be used immediately after CTL+Z)
+Ctrl+X		(displays log of history commands)
+Ctrl+Z		(initiates the terminal connection and should prompt with level T>)
+Ctrl+L		(displays drive info, # heads, serial, preamp type, family ID, etc.)
+
+/[N]		(used to change levels, replace [N] with level 2, 3, 4,... 7, T, etc.)
+F3 1>G6A	(clear P-List - Not Recommended!)
+F3 1>N1		(clears S.M.A.R.T)
+F3 1>N5		(returns SMART values in terminal window)
+F3 1>N8		(returns SMART critical event log)
+F3 2>U		(spins drive up)
+F3 2>Z		(puts drive to sleep)
+F3 7>X		(test read/write head resistance)
+F3 7>m100	(clears DOS config tables)
+F3 C>Q		(returns list of all available commands, sometimes just says "No Help Available" on all of them)
+F3 C>U10	(regenerate MCMT while retaining MC contents)
+F3 C>U2		(regenerate MCMT and MC)
+F3 T>B[N]	(sets baud rate to N, so for example T>B921000 sets to 921000 baud. If invald rate is input, e.g. B1, drive will report supported rates)
+F3 T>J		(displays CAP which has some drive info such as internal model, family ID, serial numbers, etc.)
+F3 T>V1			(checks User Slip Defect List)
+F3 T>V2			(checks System Slip Defect List T-List entries)
+F3 T>V4			(checks Reassigned Sectors List G-List entries)
+F3 T>V4,,,,99	(The display summary of G-List entries)
+F3 T>V8			(checks Servo Flaws List)
+F3 T>V10		(checks P-List entries)
+F3 T>V20		(checks Primary Servo Flaws List)
+F3 T>V40		(checks for Nonresident G-list entries)
+
+
+
+"DisplayDefectLists, V[DefectListSelect],[Hd],[StartCyl],[NumCyls],[DisplaySummaryOpt]";
+DefectListSelect;
+	000000000001=1 => user track slip list
+	000000000010=2 => reserved track slip list
+	000000000100=4 => alt list
+	000000001000=8 => servo flaws list
+	000000010000=10 => the primary defect list ( P-List )
+	000000100000=20 => primary servo flaws list
+	000001000000=40 => nonresident G List
+	000010000000=80 => resident G List
+	000100000000=100 => primary DST list
+15th bit enabled alt list If bit 15 is set, the user track slip list and the system track slip list will be displayed by entry index and entry count instead of cylinder range.
+	100000000001=8001 => user track slip list
+	100000000010=8002 => reserved track slip list
+	 Flags:
+ RESERVED 1 This bit is reserved for internal use.
+ POST_FORMAT_DEFECT 2 If set, this is a Post Format defect.
+ DEFECTIVE_SPARE 4 If set, this is a defective spare.
+ GROWN_TO_PRIMARY_LIST 8 If set, this defect came from a Glist to Plist merge.
+
+#########################################################################################################
+Initialize Defect List (Level T 'i') This command initializes the Defect List to contain no defects.
+"InitDefectList, i[DefectListSelect],[SaveListOpt],[ValidKey]";
+
+DefectListSelect 3 bitlik
+bit 2: User Alt List
+bit 1: Reserved (ignored)
+bit 0: User Slip List
+32bit uint 1-4-5  değeri alır.
+
+T>i4,1,22	(clears G-List)
+T>i2,2,22	(clear T-List - Non Recommended!)
+
+#########################################################################################################
+
+M Command Quick Reference:
+All commands issued at level T>
+m0,2,1,,,,,22 ( To rebuilt Slip list)
+m0,2,2,,,,,22 ( To rebuilt G list)
+m0,2,3,,,,,22 ( To rebuilt P list)
+
+m0,20,1,,,,,22 ( To format (seacos XF) by Slip list )
+m0,20,2,,,,,22 ( To format (seacos XF) by G list )
+m0,20,3,,,,,22 ( To format (seacos XF) by P list, most powerfull to repair bad sectors, red and green blocks )
+
+m0,5,1,10,3,,,22 ( To zero fill with slip list )(it used for erasing of all sector)
+m0,5,2,10,3,,,22 ( To zero fill with G list )(it used for erasing of all sector)
+m0,5,3,10,3,,,22 ( To zero fill with P list )(it used for erasing of all sector)
+
+m0,6,2,,,,,22 (most commonly used to regenerate translator)
+m0,6,3,,,,,22 (most commonly used to regenerate translator)
+
+m0,8,1,10,3,,,22 ( To format with slip list )
+m0,8,2,10,3,,,22 ( To format with G list )
+m0,8,3,10,3,,,22 ( To format with P list )
+
+m0,D,1,,,,,22 ( To repair bad sector by Slip list )
+m0,D,2,,,,,22 ( To repair bad sector by G list )
+m0,D,3,,,,,22 ( To repair bad sector by P list )
+(Format user area partition with repairing of bad sector, auto add bad sector into G list and in the last it will be shifted to P list )
+
+This is helpful for drives stuck in pending reallocate mode (E.G. InitiateMarkPendingReallocateRequest for disc_lba)
+All commands issues at level T>. Also HDD needs to be power cycled after issuing.
+
+F (lists out all the parameters and bytes that can be modified within the F command)
+F"RWRecoveryFlags",00,22 (disables read sparing, write sparing, and enables correction)
+F"RWRecoveryFlags",01,22 (disables read sparing, write sparing and disables correction)
+F"BGMSFlags",00,22 (disables background media scan)
+F"PerformanceFlags",0060,22 (disables offline sparing, deferred auto reallocation, and idle activities)
+F"ReadRetries",00,22 (disables read retries - possibly better performance in software like ddrescue)
+F,,22 (resets to default - sometimes necessary to get sector access back afterward)
+
+r & w Commands:
+Commands issued at level T>
+
+These commands can also be used to read/write a specific volume/copy of a system file. The command is issued as follows:
+r[FileId],[VolumeNum],[CopyNum],[ByteOffset],[Length],[OutputFmt]
+w[FileId],[VolumeNum],[CopyNum],[ByteOffset]
+These read/write operations are carried out using Y-Modem protocol supported by some terminal programs.
+
+So for example to read system file 28 volume 3, copy 1:
+T>r28,3,1
+To write system file 93 volume 3, copy 0:
+T>w93,3,0
+
+SSHD Specific (Rosewood Drives):
+O>I (Clear NAND of Donor in preparation for PCB replacement w/ ROM transfer)
+

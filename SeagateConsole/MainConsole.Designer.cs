@@ -59,6 +59,8 @@
             lblCmdStringStatus = new Label();
             richTextBox1 = new RichTextBox();
             btnConnect = new Button();
+            btnSwitchLevelT = new Button();
+            btnSendCommand = new Button();
             gbxFormatOptions.SuspendLayout();
             gbxDefectListOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarMaxWrRetryCnt).BeginInit();
@@ -316,7 +318,7 @@
             // lblCmdStringStatus
             // 
             lblCmdStringStatus.AutoSize = true;
-            lblCmdStringStatus.Location = new Point(587, 15);
+            lblCmdStringStatus.Location = new Point(333, 272);
             lblCmdStringStatus.Name = "lblCmdStringStatus";
             lblCmdStringStatus.Size = new Size(109, 15);
             lblCmdStringStatus.TabIndex = 18;
@@ -332,19 +334,41 @@
             // 
             // btnConnect
             // 
-            btnConnect.Location = new Point(587, 85);
+            btnConnect.Location = new Point(587, 12);
             btnConnect.Name = "btnConnect";
             btnConnect.Size = new Size(75, 23);
             btnConnect.TabIndex = 20;
             btnConnect.Text = "Connect";
             btnConnect.UseVisualStyleBackColor = true;
-            btnConnect.Click += btnConnect_ClickAsync;
+            btnConnect.Click += btnConnect_Click;
             // 
-            // Form1
+            // btnSwitchLevelT
+            // 
+            btnSwitchLevelT.Location = new Point(668, 12);
+            btnSwitchLevelT.Name = "btnSwitchLevelT";
+            btnSwitchLevelT.Size = new Size(120, 23);
+            btnSwitchLevelT.TabIndex = 21;
+            btnSwitchLevelT.Text = "Switch Level T";
+            btnSwitchLevelT.UseVisualStyleBackColor = true;
+            btnSwitchLevelT.Click += btnSwitchLevelT_Click;
+            // 
+            // btnSendCommand
+            // 
+            btnSendCommand.Location = new Point(668, 39);
+            btnSendCommand.Name = "btnSendCommand";
+            btnSendCommand.Size = new Size(120, 23);
+            btnSendCommand.TabIndex = 22;
+            btnSendCommand.Text = "Send Command";
+            btnSendCommand.UseVisualStyleBackColor = true;
+            btnSendCommand.Click += btnSendCommand_Click;
+            // 
+            // MainConsole
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnSendCommand);
+            Controls.Add(btnSwitchLevelT);
             Controls.Add(btnConnect);
             Controls.Add(richTextBox1);
             Controls.Add(lblCmdStringStatus);
@@ -363,7 +387,7 @@
             Controls.Add(tbxCommandString);
             Controls.Add(cmbPartition);
             Controls.Add(gbxFormatOptions);
-            Name = "Form1";
+            Name = "MainConsole";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Form1";
             Load += Form1_Load;
@@ -411,5 +435,7 @@
         private Label lblCmdStringStatus;
         private RichTextBox richTextBox1;
         private Button btnConnect;
+        private Button btnSwitchLevelT;
+        private Button btnSendCommand;
     }
 }

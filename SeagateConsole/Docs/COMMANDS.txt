@@ -1,0 +1,71 @@
+P-List: Birincil Hata Listesi - Primary Defect List
+G-List: Genişleyen Hata Listesi - Grown Defect List
+NRG-List: NON-Resident G-LIST
+
+PBA: Fiziksel Blok Adresi
+LBA: Mantıksal Blok Adresi
+CTRL+Z ile F3 Test yani DIAG moda geçiş yapılır.
+
+F3 T>V4			Reassigned Sector List (G-List'i kontrol eder)
+F3 T>i4,1,22	G-List'i temizler
+F3 T>V4			Reassigned Sector List (G-List'i kontrol eder)
+F3 T>V10		P-List(P-List'i kontrol eder)
+F3 T>/1
+F3 T>N1,,22
+
+m0,D,3,,,,,22
+
+REGENERATION COMMAND
+
+m0,6,2,,,,,22 (most commonly used to regenerate translator)
+
+
+m0,2d,1,ffff,ffff,ffff,ffff,22
+m0 = user partition
+2d = 101101 =bit definition(enable format seacos, enable reformat zone,enable log,disable certify,enable format, enable corrupt primary defects)
+ffff = max write retry
+ffff = max read retry
+ffff = max ecc level
+ffff = max rewrite retry
+22 = valid key
+and then regenrated translator with this command gives good performance :D :D
+m0,2b,3,0,0,0,0,22
+
+
+i4,1,22
+/1
+N1
+/T
+m0,6,2,,,,,22  %50 SUCCESS 
+m0,2,2,,,,,22
+m0,6,3,,,,,22
+
+
+
+F KOMUTU:
+Bu, bekleyen gerçekleştirme modunda kalmış sürücüler için yararlıdır (Örn. disc_lba için InitiateMarkPendingReallocateRequest )
+T> düzeyinde verilen tüm komutlar. Ayrıca, komut verildikten sonra HDD'nin güç döngüsüne alınması gerekir.
+
+	F (tüm F komutu içinde değiştirilebilecek parametreleri ve baytları listeler)
+	F,,22 (varsayılana sıfırlar - bazen sektör erişimini geri almak için gereklidir)
+	
+	F"RWRecoveryFlags",00,22 (okuma kurtarma, yazma kurtarma'yı devre dışı bırakır ve düzeltmeyi etkinleştirir)
+	F"RWRecoveryFlags",01,22 (okuma kurtarma, yazma kurtarma'yı devre dışı bırakır ve düzeltmeyi devre dışı bırakır)
+	F"BGMSFlags",00,22 (arka plan ortam taramasını devre dışı bırakır)
+	F"PerformanceFlags",0060,22 (çevrim dışı yedekleme, ertelenmiş otomatik yeniden atama ve boşta faaliyetleri devre dışı bırakır)
+	F"ReadRetries",00,22 (okuma tekrarlarını devre dışı bırakır - ddrescue gibi yazılımlarda daha iyi performans sağlayabilir)
+
+
+F3 T>F"RWRecoveryFlags",00,22
+F3 T>F"BGMSFlags",00,22
+F3 T>F"PerformanceFlags",043C,22
+F3 T>F"MediaCacheControl",00,22
+F3 T>F"READ_SPARING_ENABLED",0,22
+F3 T>F"WRITE_SPARING_ENABLED",0,22
+F3 T>F"OFFLINE_SPARING_ENABLED",0,22
+F3 T>F"DAR_ENABLED",0,22
+F3 T>F"DISABLE_IDLE_ACTIVITY",1,22
+F3 T>F"BGMS_DISABLE_DATA_REFRESH",1,22
+F3 T>F"ABORT_PREFETCH",1,22
+F3 T>F"READ_LOOKAHEAD_DISABLED_ON_POWER_UP",1,22
+F3 T>F"READ_CACHING_DISABLED_ON_POWER_UP",1,22
