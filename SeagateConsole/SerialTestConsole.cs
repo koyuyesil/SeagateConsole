@@ -1,4 +1,5 @@
-﻿using System.IO.Ports;
+﻿using System.Diagnostics;
+using System.IO.Ports;
 
 namespace SeagateConsole
 {
@@ -13,7 +14,7 @@ namespace SeagateConsole
             //PM.OpenPort(5);
         }
 
-        private void btnConnect_Click(object sender, EventArgs e)
+        private async void btnConnect_Click(object sender, EventArgs e)
         {
             PM.ClosePort();
             PM.SerialPort.PortName = tbxPortName.Text;
@@ -21,7 +22,22 @@ namespace SeagateConsole
             PM.SerialPort.DataBits = 8;
             PM.SerialPort.Parity = Parity.None;
             PM.SerialPort.StopBits = StopBits.One;
-            PM.OpenPort(5);
+
+            Debug.WriteLine("Port bekleniyor...");
+
+            bool portOpened = await Task.Run(() => PM.OpenPort(5));
+
+            Invoke(new Action(() =>
+            {
+                if (portOpened)
+                {
+                    Debug.WriteLine("Port başarıyla açıldı!");
+                }
+                else
+                {
+                    Debug.WriteLine("Port açılamadı.");
+                }
+            }));
         }
 
         private void SerialTestConsole_FormClosing(object sender, FormClosingEventArgs e)
