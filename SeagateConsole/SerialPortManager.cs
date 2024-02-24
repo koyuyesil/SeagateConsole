@@ -1,4 +1,6 @@
-﻿using System.IO.Ports;
+﻿using System.Diagnostics;
+using System.IO.Ports;
+using System.Windows.Forms;
 
 namespace SeagateConsole
 {
@@ -15,13 +17,32 @@ namespace SeagateConsole
             //SerialPort.StopBits = StopBits.One;
         }
 
+
+        public bool OpenPort2(int timeoutInSeconds) {
+
+            DateTime startTime = DateTime.Now;
+            TimeSpan duration = TimeSpan.FromSeconds(timeoutInSeconds);
+
+            while (DateTime.Now - startTime < duration)
+            {
+                ShowMessageBox($"Döngü çalışıyor...{DateTime.Now - startTime}");
+            }
+
+            Console.WriteLine("Döngü bitti.");
+            return false;
+        }
+
+        private void ShowMessageBox(string message)
+        {
+            MessageBox.Show(message);
+        }
+
         public bool OpenPort(int timeoutInSeconds)
         {
-            int elapsedTime = 0;
-
-            while (elapsedTime < timeoutInSeconds * 1000)
+            DateTime startTime = DateTime.Now;
+            TimeSpan duration = TimeSpan.FromSeconds(timeoutInSeconds);
+            while (DateTime.Now - startTime < duration)
             {
-                // Seri portu açıksa kapat kapalıysa aç
                 try
                 {
                     if (serialPort.IsOpen)
@@ -33,11 +54,11 @@ namespace SeagateConsole
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Seri port açılamadı: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Debug.WriteLine("Seri port açılamadı: " + ex.Message, "Hata");
+                    //MessageBox.Show("Seri port açılamadı: " + ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                elapsedTime += 1000;
             }
-            return false; // Belirtilen süre içinde port açılamazsa false döndür
+            return false;
         }
 
         public void ClosePort()

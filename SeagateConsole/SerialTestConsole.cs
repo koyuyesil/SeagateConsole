@@ -10,7 +10,7 @@ namespace SeagateConsole
             InitializeComponent();
             
             PM.SerialPort.DataReceived += SerialPort_DataReceived;
-            PM.OpenPort(3);
+            //PM.OpenPort(5);
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
@@ -21,7 +21,7 @@ namespace SeagateConsole
             PM.SerialPort.DataBits = 8;
             PM.SerialPort.Parity = Parity.None;
             PM.SerialPort.StopBits = StopBits.One;
-            PM.OpenPort(3);
+            PM.OpenPort(5);
         }
 
         private void SerialTestConsole_FormClosing(object sender, FormClosingEventArgs e)

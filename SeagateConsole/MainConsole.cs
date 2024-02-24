@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.IO.Ports;
 using System.Text;
-using System.Windows.Forms;
 
 namespace SeagateConsole
 {
@@ -19,7 +18,7 @@ namespace SeagateConsole
             InitializeTrackBars();
 
             PM.SerialPort.DataReceived += _serialPort_DataReceived;
-            PM.OpenPort(3);
+            //PM.OpenPort(5);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -223,17 +222,24 @@ namespace SeagateConsole
             UpdateDefectListOptions();
         }
 
-        private void btnConnect_Click(object sender, EventArgs e)
+        private async void btnConnect_Click(object sender, EventArgs e)
         {
             LogInfo("Port bekleniyor...");
-            if (PM.OpenPort(5))
+
+            bool portOpened = await Task.Run(() => PM.OpenPort(5));
+
+            Invoke(new Action(() =>
             {
-                LogInfo("Port baþarýyla açýldý!");
-            }
-            else
-            {
-                LogError("Port açýlamadý.");
-            }
+                if (portOpened)
+                {
+                    LogInfo("Port baþarýyla açýldý!");
+                }
+                else
+                {
+                    LogError("Port açýlamadý.");
+                }
+            }));
+
         }
 
         private void btnSwitchLevelT_Click(object sender, EventArgs e)
