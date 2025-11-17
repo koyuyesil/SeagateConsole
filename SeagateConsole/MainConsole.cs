@@ -10,10 +10,10 @@ namespace SeagateConsole
         private UInt16 MaxRdRetryCnt;
         private UInt16 MaxEccTLevel;
         private UInt16 MaxCertifyTrkRewrites;
-        SerialPortManager PM = new SerialPortManager("COM10", 115200);//jenerik olmalÄ± hÄ±za fikkat et
+        SerialPortManager PM = new SerialPortManager("COM2", 115200);//jenerik olmalý hýza dikkat et
         SerialTestConsole? frmSerialTestConsole;
         public MainConsole()
-        {
+        {// güzel bir event uygulamasý örneði.
             InitializeComponent();
             InitializeTrackBars();
 
@@ -105,7 +105,7 @@ namespace SeagateConsole
         private void TrackBar_Scroll(object? sender, EventArgs e)
         {
             if (sender != null) // sender nasýl null oluyor hayrola?
-            {
+            {//labeller jenerik olmalý initializede de aynýsý olmalý dile göre olabilir
                 // Ortak TrackBar kaydýrma event'i
                 UInt16 value = (UInt16)((TrackBar)sender).Value;
 

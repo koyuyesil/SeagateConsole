@@ -5,9 +5,11 @@ namespace SeagateConsole
 {
     public partial class SerialTestConsole : Form
     {
-        SerialPortManager PM = new SerialPortManager("COM11", 115200);
+        SerialPortManager PM = new SerialPortManager("COM3", 115200);
         public SerialTestConsole()
         {
+            //VSPE Virtual Serial Ports Emulator Yazılımı ile sanal port oluşturabilirsiniz.
+            //https://eterlogic.com/Products.VSPE.html
             InitializeComponent();
             
             PM.SerialPort.DataReceived += SerialPort_DataReceived;
