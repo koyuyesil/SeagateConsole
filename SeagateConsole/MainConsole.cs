@@ -10,7 +10,7 @@ namespace SeagateConsole
         private UInt16 MaxRdRetryCnt;
         private UInt16 MaxEccTLevel;
         private UInt16 MaxCertifyTrkRewrites;
-        SerialPortManager PM = new SerialPortManager("COM10", 115200);
+        SerialPortManager PM = new SerialPortManager("COM10", 115200);//jenerik olmalı hıza fikkat et
         SerialTestConsole? frmSerialTestConsole;
         public MainConsole()
         {
